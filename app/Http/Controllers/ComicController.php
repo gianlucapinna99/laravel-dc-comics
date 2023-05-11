@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Comic;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 
 class ComicController extends Controller
 {
@@ -13,7 +15,8 @@ class ComicController extends Controller
      */
     public function index()
     {
-        //
+        $comics = Comic::all();
+        return view('comics.index', compact('comics'));
     }
 
     /**
@@ -23,7 +26,7 @@ class ComicController extends Controller
      */
     public function create()
     {
-        //
+        return view('comics.create');
     }
 
     /**
@@ -34,7 +37,20 @@ class ComicController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $data = $request->all();
+
+        $newComic = new Comic();
+        $newComic->title = $data['title'];
+        $newComic->description = $data['description'];
+        $newComic->thumb = $data['thumb'];
+        $newComic->price = $data['price'];
+        $newComic->series = $data['series'];
+        $newComic->sale_date = $data['sale_date'];
+        $newComic->type = $data['type'];
+        $newComic->artists = $data['artists'];
+        $newComic->writers = $data['writers'];
+        $newComic->save();
+        return redirect()->route('comics.show', $newComic->id);
     }
 
     /**
@@ -45,7 +61,9 @@ class ComicController extends Controller
      */
     public function show($id)
     {
-        //
+        $comic = Comic::find($id);
+
+        return view('comics.show', ['comic' => $comic]);
     }
 
     /**
@@ -56,7 +74,7 @@ class ComicController extends Controller
      */
     public function edit($id)
     {
-        //
+        return view('comics.edit', compact('comic'));
     }
 
     /**
@@ -68,7 +86,9 @@ class ComicController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $data = $request->all();
+        $comic->update($data);
+        return to_route('comics.show', $comic);
     }
 
     /**
@@ -79,6 +99,7 @@ class ComicController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $comic->delete();
+        return to_route('comics.index');
     }
 }
